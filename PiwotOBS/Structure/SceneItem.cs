@@ -6,12 +6,57 @@ using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using NAudio.SoundFont;
+using PiwotOBS.PMath;
 
 namespace PiwotOBS.Structure
 {
 
     public partial class SceneItem
     {
+        public Float2 OBSPosition 
+        { 
+            get=>Transform?.Position??Float2.Zero; 
+            protected set { 
+                if (Transform != null) 
+                { 
+                    Transform.positionX = value.X; 
+                    Transform.positionX = value.Y; 
+                } 
+            } 
+        }
+        public Float2 CurPosition { get => curPosition??OBSPosition; protected set { curPosition = value; } }
+        protected Float2? curPosition = null;
+
+        public Float2 OBSScale
+        { 
+            get=>Transform?.Scale??Float2.Zero; 
+            protected set { 
+                if (Transform != null) 
+                { 
+                    Transform.scaleX = value.X; 
+                    Transform.scaleY = value.Y; 
+                }
+            } 
+        }
+        public Float2 CurScale { get => curScale ?? OBSScale; protected set { curScale = value; } }
+        protected Float2? curScale = null;
+        public Float2 OBSSize
+        {
+            get => Transform?.Size ?? Float2.Zero;
+            protected set
+            {
+                if (Transform != null)
+                {
+                    Transform.width = value.X;
+                    Transform.height = value.Y;
+                }
+            }
+        }
+        public Float2 CurSize { get => curSize ?? OBSSize; protected set { curSize = value; } }
+        protected Float2? curSize = null;
+        public float OBSRotation { get=> Transform?.rotation??0; protected set { if (Transform != null) Transform.rotation=value; } }
+        public float CurRotation { get; protected set; }
         public SceneItem? Parent { get; protected set; }
 
         internal void ClearParent()
@@ -24,5 +69,36 @@ namespace PiwotOBS.Structure
             Parent = parent;
         }
 
+        protected void Init()
+        {
+            CurPosition = OBSPosition;
+            CurRotation = OBSRotation;
+            CurPosition = OBSPosition;
+        }
+
+        public void TransformObject(
+            Float2? newPos = null,
+            Float2? deltaPos = null,
+            Float2? newScale = null,
+            Float2? deltaScale = null,
+            Float2? relativeScale = null,
+            float? newRotation=null,
+            float deltaRotation=0)
+        {
+            if(deltaPos == null)
+            {
+                deltaPos = Float2.Zero;
+            }
+            if(newPos == null)
+            {
+                newPos = deltaPos;
+            }
+        }
+            
+
+        public void ScaleObjectRelative(float relativeScaleX=1, float relativeScaleY=1)
+        {
+
+        }
     }
 }

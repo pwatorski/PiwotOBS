@@ -148,155 +148,6 @@ namespace PiwotOBS.PMath
             return new Float2(y, x);
         }
 
-        ///<summary>Rotates values of x and y in clockwise direction in this instance of the object.
-        ///</summary>
-        public void RotateRight()
-        {
-            float t = x;
-            x = y;
-            y = -t;
-        }
-
-        ///<summary>Rotates values of x and y in anti-clockwise direction in this instance of the object.
-        ///</summary>
-        public void RotateLeft()
-        {
-            float t = x;
-            x = -y;
-            y = t;
-        }
-
-
-        /// <summary>
-        /// Rotates values of x and y a given amount of times in a given direction.
-        /// </summary>
-        /// <param name="direction">The direction of rotation, positive numbers being clockwise.</param>
-        public void Rotate(float direction)
-        {
-            bool leftFlag = false;
-            if (direction < 0)
-            {
-                direction *= -1;
-                leftFlag = true;
-            }
-            direction %= 4;
-            if (direction == 0)
-                return;
-            if (leftFlag)
-            {
-                for (float i = 0; i < direction; i++)
-                {
-                    RotateLeft();
-                }
-            }
-            else
-            {
-                for (float i = 0; i < direction; i++)
-                {
-                    RotateRight();
-                }
-            }
-        }
-
-        ///<summary>Rotates values of x and y in clockwise direction.
-        ///</summary>
-        static public void RotateRight(Float2 i)
-        {
-            i.RotateRight();
-        }
-
-        ///<summary>Rotates values of x and y in anti-clockwise direction.
-        ///</summary>
-        static public void RotateLeft(Float2 i)
-        {
-            i.RotateLeft();
-        }
-
-
-        /// <summary>
-        /// Rotates values of x and y a given amount of times in a given direction.
-        /// </summary>
-        /// <param name="direction">The direction of rotation, positive numbers being clockwise.</param>
-        static public void Rotate(Float2 i, float direction)
-        {
-            i.Rotate(direction);
-        }
-
-
-        ///<summary>Return a new instance of <see cref="Float2"/> with values of x and y rotated in clockwise direction.
-        ///</summary>
-        public Float2 RotatedRight()
-        {
-            Float2 i = new Float2(this);
-            i.RotateRight();
-            return i;
-        }
-
-        ///<summary>Return a new instance of <see cref="Float2"/> with values of x and y rotated in anti-clockwise direction.
-        ///</summary>
-        public Float2 RotatedLeft()
-        {
-            Float2 i = new Float2(this);
-            i.RotatedLeft();
-            return i;
-        }
-
-
-        /// <summary>
-        /// Return a new instance of <see cref="Float2"/> with values of x and y rotated in a given direction.
-        /// </summary>
-        /// <param name="direction">The direction of rotation, positive numbers being clockwise.</param>
-        public Float2 Rotated(float direction)
-        {
-            Float2 i = new Float2(this);
-            i.Rotate(direction);
-            return i;
-        }
-
-        /// <summary>
-        /// Returns a direction closest to a given vector where "Up"(0, 1) is 0, "Right"(1, 0) is 1, "Down"(0, -1) is 2, "Left"(-1, 0) is 3. Will return 0 if vector==<see cref="Float2"/>.Zero
-        /// </summary>
-        /// <param name="vector"></param>
-        /// <returns></returns>
-        public static float Compass(Float2 vector)
-        {
-            float lenX = Math.Abs(vector.X);
-            float lenY = Math.Abs(vector.Y);
-            if (lenX > lenY)
-            {
-                return (vector.X >= 0 ? 1 : 3);
-            }
-            else
-            {
-                return (vector.y >= 0 ? 0 : 2);
-            }
-
-        }
-        /// <summary>
-        /// Returns a <see cref="Float2"/> instance pointing in a given drection. Works for all values, as they are mapped to one of four(0,1,2,3) possible directions in a looping manner.
-        /// </summary>
-        /// <param name="direction">Any number</param>
-        /// <returns></returns>
-        public static Float2 Compass(float direction)
-        {
-            if (direction >= 0)
-            {
-                direction %= 4;
-            }
-            else
-            {
-                direction = 3 + (direction + 1) % 4;
-            }
-            switch (direction)
-            {
-                case 0: return Up;
-                case 1: return Right;
-                case 2: return Down;
-                default: return Left;
-            }
-
-        }
-
         ///<summary>Returns a new instance of <see cref="Float2"/> with values of x and y clamped between 0 and inclusiveMax.
         ///</summary>
         ///<param name="i">The instance of <see cref="Float2"/> class to be clamped.</param>
@@ -373,58 +224,7 @@ namespace PiwotOBS.PMath
             Arit.Clamp(y, inclusiveMin.y, inclusiveMax.y);
         }
 
-        /// <summary>
-        /// Function designed for grid based systems, that require chunking or similar scale-step operations.
-        /// Divides a given <see cref="Float2"/> by a given divisor while taking into account negative coordinates.
-        /// <para>
-        /// 
-        /// </para>
-        /// </summary>
-        /// <param name="int2"></param>
-        /// <param name="divisor"></param>
-        /// <returns></returns>
-        public static Float2 DivideOnGrid(Float2 int2, float divisor)
-        {
-            Float2 pos = int2 / divisor;
-            if (int2.X < 0 && int2.X % divisor != 0)
-            {
-                pos.X -= 1;
-            }
-            if (int2.Y < 0 && int2.Y % divisor != 0)
-            {
-                pos.Y -= 1;
-            }
-            return pos;
-        }
-        
-        /// <summary>
-        /// Returns a list of positions of squares that intersect inclusively in a given region.
-        /// <para>
-        /// Positions are scaled so that one unit is equal to provided squareSize if <c>returnScaledPositions</c> is set to <see langword="true"/>.
-        /// </para>
-        /// </summary>
-        /// <param name="regionLowerLeft">Position of the lower left corener of checked region.</param>
-        /// <param name="regionSize">Size of the region.</param>
-        /// <param name="squareSize">Size of the grid square.</param>
-        /// <param name="returnScaledPositions">Determines if the returned positions should be scaled to match square size.</param>
-        /// <returns></returns>
-        public static List<Float2> GetIntersectedSquares(Float2 regionLowerLeft, Float2 regionSize, float squareSize, bool returnScaledPositions = true)
-        {
-            List<Float2> intersectedSquares = new List<Float2>();
-            Float2 regionUpperRight = DivideOnGrid(regionLowerLeft + regionSize, squareSize);
-            regionLowerLeft = DivideOnGrid(regionLowerLeft, squareSize);
-            for (float x = regionLowerLeft.X; x <= regionUpperRight.X; x++)
-            {
-                for (float y = regionLowerLeft.Y; y <= regionUpperRight.Y; y++)
-                {
-                    if (returnScaledPositions)
-                        intersectedSquares.Add(new Float2(x, y));
-                    else
-                        intersectedSquares.Add(new Float2(x * squareSize, y * squareSize));
-                }
-            }
-            return intersectedSquares;
-        }
+
         #endregion
 
         #region Random
@@ -613,7 +413,7 @@ namespace PiwotOBS.PMath
         /// <param name="i1"></param>
         /// <param name="i2"></param>
         /// <returns></returns>
-        public static bool operator ==(Float2 i1, Float2 i2)
+        public static bool operator ==(Float2? i1, Float2? i2)
         {
             if (i2 is null) return i1 is null; if (i1 is null) return i2 is null;
             if (i1.x == i2.x && i1.y == i2.y) return true; return false;
@@ -624,9 +424,9 @@ namespace PiwotOBS.PMath
         /// <param name="i1"></param>
         /// <param name="i2"></param>
         /// <returns></returns>
-        public static bool operator !=(Float2 i1, Float2 i2)
+        public static bool operator !=(Float2? i1, Float2? i2)
         {
-            if (i2 is null) return !(i1 is null); if (i1 is null) return !(i2 is null);
+            if (i2 is null) return i1 is not null; if (i1 is null) return i2 is not null;
             if (i1.x == i2.x && i1.y == i2.y) return false; return true;
         }
         /// <summary>

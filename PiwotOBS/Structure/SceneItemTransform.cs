@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PiwotOBS.PMath;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Principal;
@@ -9,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace PiwotOBS.Structure
 {
-    public class Sceneitemtransform
+    internal class Sceneitemtransform
     {
         public int alignment { get; set; }
         public int boundsAlignment { get; set; }
@@ -29,6 +30,10 @@ namespace PiwotOBS.Structure
         public float sourceHeight { get; set; }
         public float sourceWidth { get; set; }
         public float width { get; set; }
+
+        public Float2 Position { get => new Float2(positionX, positionY); }
+        public Float2 Size { get => new Float2(width, height); }
+        public Float2 Scale { get => new Float2(scaleX, scaleY); }
 
         static Sceneitemtransform? FromJson(JsonObject jsonObject)
         {

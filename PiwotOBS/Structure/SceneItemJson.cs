@@ -27,7 +27,7 @@ namespace PiwotOBS.Structure
         [JsonPropertyName("sceneItemLocked")]
         public bool Locked { get; set; }
         [JsonPropertyName("sceneItemTransform")]
-        public Sceneitemtransform? Transform { get; set; }
+        internal Sceneitemtransform? Transform { get; set; }
         [JsonPropertyName("sourceName")]
         public string SourceName { get; set; }
         [JsonPropertyName("sourceType")]
@@ -55,7 +55,10 @@ namespace PiwotOBS.Structure
                 return scene;
             }
 
-            return JsonSerializer.Deserialize<SceneItem>(jsonObject.ToJsonString(), jsonSerializerOptions);
+            var obj = JsonSerializer.Deserialize<SceneItem>(jsonObject.ToJsonString(), jsonSerializerOptions);
+            obj?.Init();
+
+            return obj;
         }
 
         public static SceneItem? FromJson(JsonObject jsonObject)
@@ -80,7 +83,10 @@ namespace PiwotOBS.Structure
                 return scene;
             }
 
-            return JsonSerializer.Deserialize<SceneItem>(jsonObject.ToJsonString(), jsonSerializerOptions);
+            var obj = JsonSerializer.Deserialize<SceneItem>(jsonObject.ToJsonString(), jsonSerializerOptions);
+            obj?.Init();
+
+            return obj;
         }
 
 
