@@ -29,6 +29,21 @@ namespace PiwotOBS.Structure
             item.ClearParent();
         }
 
+        public SceneItem? FindItem(string name)
+        {
+            var item = Items.Find((x)=>x.Name == name);
+            if(item != null) return item;
+            foreach(var subItem in Items)
+            {
+                if (subItem is Container container)
+                {
+                    item = container.FindItem(name);
+                    if (item != null) return item;
+                }
+            }
+            return null;
+        }
+
 
         public virtual void BuildChildren()
         {
