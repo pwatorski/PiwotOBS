@@ -80,6 +80,21 @@ namespace PiwotOBS.Structure
             //CurPosition = OBSPosition;
         }
 
+        protected JsonObject GetCurrentTransformJson()
+        {
+            JsonObject transform = new JsonObject()
+            {
+                { "height", CurSize.X},
+                { "width", CurSize.Y},
+                { "positionX", CurPosition.X},
+                { "positionY", CurPosition.Y},
+                { "scaleX", CurScale.X},
+                { "scaleY", CurScale.Y},
+                { "rotation", CurRotation }
+            };
+            return transform;
+        }
+
         protected string GetSceneName()
         {
             if(Parent == null)
@@ -108,35 +123,41 @@ namespace PiwotOBS.Structure
             {
                 deltaPos = Float2.Zero;
             }
-            if(newPos == null)
-            {
-                newPos = deltaPos + CurPosition;
-            }
 
-            if(newScale == null)
+            
+
+            if (newScale == null)
             {
                 if (relativeScale != null)
                 {
-                    newScale = OBSScale * relativeScale;
+                    CurScale = OBSScale * relativeScale;
                 }
                 else if (deltaScale != null)
                 {
-                    newScale = deltaScale + CurScale;
+                    CurScale += deltaScale;
                 }
             }
-
-            if(newRotation == null)
+            else
             {
-                newRotation = CurRotation + deltaRotation;
+                CurScale = newScale;
             }
 
-            
-        }
-            
+            CurPosition = newPos ?? CurPosition + deltaPos;
+            CurRotation = newRotation ?? CurRotation + deltaRotation;
 
-        public void ScaleObjectRelative(float relativeScaleX=1, float relativeScaleY=1)
+            OBSDeck.OBS.SetSceneItemTransform(SceneName, SceneItemId, GetCurrentTransformJson());
+        }
+
+
+        public void ScaleObjectRelative(float relativeScaleX = 1, float relativeScaleY = 1)
         {
-
+            TransformObject(relativeScale: new Float2(relativeScaleX, relativeScaleY));
         }
+
+        public void SetRelativePosition(float deltaX = 0, float deltaY = 0)
+        {
+            TransformObject(newPos: OBSPosition + new Float2(deltaX, deltaY));
+        }
+
     }
 }
