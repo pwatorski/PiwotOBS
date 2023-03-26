@@ -15,7 +15,7 @@ namespace PiwotOBS.Structure
         [JsonPropertyName("inputKind")]
         public string InputKind { get; set; }
         [JsonPropertyName("isGroup")]
-        public bool IsGroup { get; set; } = false;
+        public bool? IsGroup { get; set; } = false;
         [JsonPropertyName("sceneItemBlendMode")]
         public string SceneItemBlendMode { get; set; }
         [JsonPropertyName("sceneItemEnabled")]
@@ -33,7 +33,7 @@ namespace PiwotOBS.Structure
         [JsonPropertyName("sourceType")]
         public string SourceType { get; set; }
 
-        public bool IsScene { get=>!IsGroup && SourceType== "OBS_SOURCE_TYPE_SCENE"; }
+        public bool IsScene { get=>!(IsGroup??false) && SourceType== "OBS_SOURCE_TYPE_SCENE"; }
 
         public string Name { get => SourceName; }
 
@@ -59,7 +59,7 @@ namespace PiwotOBS.Structure
 
             var obj = JsonSerializer.Deserialize<SceneItem>(jsonObject.ToJsonString(), jsonSerializerOptions);
             obj?.Init();
-
+            obj.Transform = Sceneitemtransform.FromJson(jsonObject["sceneItemTransform"]?.AsObject());
             return obj;
         }
 
@@ -87,7 +87,7 @@ namespace PiwotOBS.Structure
 
             var obj = JsonSerializer.Deserialize<SceneItem>(jsonObject.ToJsonString(), jsonSerializerOptions);
             obj?.Init();
-
+            obj.Transform = Sceneitemtransform.FromJson(jsonObject["sceneItemTransform"]?.AsObject());
             return obj;
         }
 

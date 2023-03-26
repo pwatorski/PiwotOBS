@@ -35,8 +35,9 @@ namespace PiwotOBS.Structure
         public Float2 Size { get => new Float2(width, height); }
         public Float2 Scale { get => new Float2(scaleX, scaleY); }
 
-        static Sceneitemtransform? FromJson(JsonObject jsonObject)
+        public static Sceneitemtransform? FromJson(JsonObject? jsonObject)
         {
+            if (jsonObject == null) return null;
             return JsonSerializer.Deserialize<Sceneitemtransform>(jsonObject.ToJsonString());
         }
 
