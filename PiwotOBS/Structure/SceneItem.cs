@@ -59,6 +59,8 @@ namespace PiwotOBS.Structure
         public float CurRotation { get; protected set; }
         public SceneItem? Parent { get; protected set; }
 
+        public string SceneName { get; protected set; } = String.Empty;
+
         internal void ClearParent()
         {
             Parent = null;
@@ -67,13 +69,30 @@ namespace PiwotOBS.Structure
         internal void SetParent(SceneItem parent) 
         {
             Parent = parent;
+            SceneName = GetSceneName();
+
         }
 
         protected void Init()
         {
-            CurPosition = OBSPosition;
-            CurRotation = OBSRotation;
-            CurPosition = OBSPosition;
+            //CurPosition = OBSPosition;
+            //CurRotation = OBSRotation;
+            //CurPosition = OBSPosition;
+        }
+
+        protected string GetSceneName()
+        {
+            if(Parent == null)
+            {
+                return Name;
+            }
+
+            if(Parent?.IsScene??false)
+            {
+                return Parent.Name;
+            }
+
+            return Parent?.GetSceneName()??string.Empty;
         }
 
         public void TransformObject(
@@ -91,8 +110,27 @@ namespace PiwotOBS.Structure
             }
             if(newPos == null)
             {
-                newPos = deltaPos;
+                newPos = deltaPos + CurPosition;
             }
+
+            if(newScale == null)
+            {
+                if (relativeScale != null)
+                {
+                    newScale = OBSScale * relativeScale;
+                }
+                else if (deltaScale != null)
+                {
+                    newScale = deltaScale + CurScale;
+                }
+            }
+
+            if(newRotation == null)
+            {
+                newRotation = CurRotation + deltaRotation;
+            }
+
+            
         }
             
 

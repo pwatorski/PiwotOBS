@@ -15,7 +15,7 @@ namespace PiwotOBS.Structure
         [JsonPropertyName("inputKind")]
         public string InputKind { get; set; }
         [JsonPropertyName("isGroup")]
-        public bool? IsGroup { get; set; } = false;
+        public bool IsGroup { get; set; } = false;
         [JsonPropertyName("sceneItemBlendMode")]
         public string SceneItemBlendMode { get; set; }
         [JsonPropertyName("sceneItemEnabled")]
@@ -32,6 +32,8 @@ namespace PiwotOBS.Structure
         public string SourceName { get; set; }
         [JsonPropertyName("sourceType")]
         public string SourceType { get; set; }
+
+        public bool IsScene { get=>!IsGroup && SourceType== "OBS_SOURCE_TYPE_SCENE"; }
 
         public string Name { get => SourceName; }
 

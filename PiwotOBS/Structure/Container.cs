@@ -48,7 +48,7 @@ namespace PiwotOBS.Structure
             Items = new List<SceneItem>();
             foreach (var item in items)
             {
-                Items.Add(SceneItem.FromJson(item));
+                AddItem(SceneItem.FromJson(item));
             }
         }
 
@@ -58,7 +58,7 @@ namespace PiwotOBS.Structure
             Items = new List<SceneItem>();
             foreach (var item in items)
             {
-                Items.Add(SceneItem.FromOBSJson(item));
+                AddItem(SceneItem.FromOBSJson(item));
             }
         }
 
