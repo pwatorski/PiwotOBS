@@ -275,6 +275,10 @@ namespace PiwotOBS.PMath
 
         #region NumberOperations
 
+        public static float Larp(float v0, float v1, float t=0.5f)
+        {
+            return v0 + (v1 - v0) * t;
+        }
 
         #endregion
 

@@ -546,6 +546,10 @@ namespace PiwotOBS.PMath
             return Copy();
         }
 
+        public static Float2 Larp(Float2 f0, Float2 f1, float t=0.5f )
+        {
+            return f0 + (f1 - f0) * t;
+        }
 
 
         #endregion
