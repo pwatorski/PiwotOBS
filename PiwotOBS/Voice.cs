@@ -54,9 +54,6 @@ namespace PiwotOBS
             VolumeRecord[volumeRecordPoint] = CurVolume;
             volumeRecordPoint = (volumeRecordPoint + 1) % VolumeRecord.Length;
             VolumeRecordAvg = VolumeRecord.Sum() / VolumeRecord.Length;
-            Console.WriteLine($"{CurVolume} {VolumeRecordAvg}");
         }
-
-        
     }
 }
