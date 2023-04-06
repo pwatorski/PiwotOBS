@@ -84,13 +84,23 @@ namespace PiwotOBS.Structure
             return transform;
         }
 
+        public void UpdateTargetCurVals()
+        {
+            
+        }
+
     }
 
     public class AnimationKeyFrame
     {
-        public float Time { get; protected set; }
+        public float TimePoint { get; protected set; }
         public AnimationTransform Transform { get; protected set; }
-        public static AnimationTransform GetMidFrameYtansform(AnimationKeyFrame other, float time)
+        public AnimationKeyFrame(AnimationTransform transform, float timePoint)
+        {
+            Transform = transform;
+            TimePoint = timePoint;
+        }
+        public static AnimationTransform GetMidFrameTansform(AnimationKeyFrame other, float time)
         {
             return null;
         }
@@ -99,16 +109,57 @@ namespace PiwotOBS.Structure
     public class FrameAnimation : Animation
     {
         protected List<AnimationKeyFrame> keyFrames;
+        public float StartTime { get; protected set; } = 0;
+        public float Duration { get; protected set; } = 0;
+        public bool Loop { get; set; } = false;
         public FrameAnimation(SceneItem target) : base(target)
         {
+        }
+
+        public override void Step(float time)
+        {
+            var animationTime = (time - StartTime);
+            if(animationTime > Duration && !Loop)
+            {
+                // ADD 
+                return;
+            }
+
+
+            base.Step(time);
+        }
+
+        protected float CalculateDuration()
+        {
+            return keyFrames.Max((x) => x.TimePoint);
+        }
+
+        protected void GetMidFrame(float animationTime)
+        {
+
+        }
+
+        public void AddKeyFrame(SceneItem target, float timePoint)
+        {
+            AddKeyFrame(new AnimationKeyFrame(new AnimationTransform(target), timePoint));
+        }
+
+        public void AddKeyFrame(AnimationTransform transform, float timePoint)
+        {
+            AddKeyFrame(new AnimationKeyFrame(transform, timePoint));
+        }
+        public void AddKeyFrame(AnimationKeyFrame keyFrame)
+        {
+            keyFrames.Add(keyFrame);
+            Duration = CalculateDuration();
         }
     }
 
     public class ProceduralAnimation : Animation
     {
         protected AnimationTransform baseTransform;
-        protected Func<float, SceneItem, JsonObject> TransformFunction;
-        public ProceduralAnimation(SceneItem target, Func<float, SceneItem, JsonObject> func) : base(target)
+        protected Func<float, SceneItem, AnimationTransform> TransformFunction;
+        public ProceduralAnimation(SceneItem target, Func<float, SceneItem, AnimationTransform> func) : base(target)
         {
             baseTransform = new AnimationTransform(target);
             TransformFunction = func;
@@ -117,7 +168,8 @@ namespace PiwotOBS.Structure
         public override void Step(float time)
         {
             var transform = TransformFunction.Invoke(time, TargetItem);
-            OBSDeck.OBS.SetSceneItemTransform(TargetItem.SceneName, TargetItem.SceneItemId, transform);
+            TargetItem.TransformObject(newPos: transform.Position, newScale: transform.Scale, newRotation: transform.Rotation);
+            //OBSDeck.OBS.SetSceneItemTransform(TargetItem.SceneName, TargetItem.SceneItemId, transform.ToJson());
             base.Step(time);
         }
     }
