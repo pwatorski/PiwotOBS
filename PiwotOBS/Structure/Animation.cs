@@ -343,6 +343,14 @@ namespace PiwotOBS.Structure
                 {nameof(Loop), Loop }
             };
         }
+        public static FrameAnimation FromJson(string savePath, Scene rootScene)
+        {
+            using StreamReader sr = new(savePath, Encoding.UTF8);
+            var node = JsonNode.Parse(sr.ReadToEnd());
+            sr.Close();
+            sr.Dispose();
+            return FromJson(node.AsObject(), rootScene);
+        }
         public static FrameAnimation FromJson(JsonObject source, Scene rootScene)
         {
             string? targetName = (string?)source["TargetName"] ?? throw new Exception("No target scene item name in animation definition!");

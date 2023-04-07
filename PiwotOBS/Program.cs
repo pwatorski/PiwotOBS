@@ -56,14 +56,14 @@ void ConnectedHandler(object? sender, EventArgs e)
 int step = 0;
 Thread.Sleep(3000);
 
-//Scene scene2 = Scene.GetRootScene("SAFARI");
-//scene2.Save("");
-//var jumpscare = scene.FindItem("Foxyer_0706_bez_ta.png");
+Scene scene2 = Scene.GetRootScene("SAFARI");
+scene2.Save("");
 var scene = (Scene)Scene.Load("SAFARI.json");
 var jumpscare = scene.FindItem("Foxyer_0706_bez_ta.png");
 var XD_FACE = scene.FindItem("XD_FACE_AVATAR");
 var hand = scene.FindItem("[DRINK] BEER_HAND");
-Animator animator = new Animator();
+var debugShape = scene.FindItem("DEBUG_SHAPE");
+Animator animator = new Animator(60);
 VoiceMeter voiceMeter = new VoiceMeter(volumeRecordLength: 4);
 voiceMeter.Start();
 
@@ -72,12 +72,13 @@ float rotationSetCut = 0.7f;
 float rotationResetCut = 0.4f;
 float curDirection = 0;
 
-FrameAnimation animation = new FrameAnimation(hand);
-using StreamReader sr = new("anim_1.json", System.Text.Encoding.UTF8);
+FrameAnimation animation = new FrameAnimation(debugShape);
+using StreamReader sr = new("BEER_ANIM.json", System.Text.Encoding.UTF8);
 var node = JsonNode.Parse(sr.ReadToEnd());
 sr.Close();
 sr.Dispose();
-FrameAnimation animation2 = FrameAnimation.FromJson(node.AsObject(), scene);
+FrameAnimation animation2 = FrameAnimation.FromJson("BEER_ANIM.json", scene);
+FrameAnimation animationDebug = FrameAnimation.FromJson("anim_1.json", scene);
 JsonSerializerOptions jsonWriterOptions = new JsonSerializerOptions()
 {
     WriteIndented = true
@@ -141,7 +142,9 @@ ProceduralAnimation proceduralAnimation = new ProceduralAnimation(XD_FACE, (floa
 });
 //animator.RegisterAnimation(proceduralAnimation);
 animation2.Loop = true;
+animationDebug.Loop = true;
 animator.RegisterAnimation(animation2);
+animator.RegisterAnimation(animationDebug);
 animator.Run();
 //var x = obs.GetSceneItemList("SAFARI");
 //SceneItem si = SceneItem.FromJson(x[0]);
