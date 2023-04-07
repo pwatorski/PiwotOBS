@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Nodes;
 using System.Threading.Tasks;
 
 namespace PiwotOBS.PMath
@@ -549,6 +550,22 @@ namespace PiwotOBS.PMath
         public static Float2 Larp(Float2 f0, Float2 f1, float t=0.5f )
         {
             return f0 + (f1 - f0) * t;
+        }
+
+        public JsonObject ToJson()
+        {
+            return new JsonObject()
+                {
+                    {nameof(X), X },
+                    {nameof(Y), Y }
+                };
+        }
+
+        public static Float2 FromJson(JsonObject source)
+        {
+            var X = (float?)source["X"] ?? throw new Exception("No value for X!");
+            var Y = (float?)source["Y"] ?? throw new Exception("No value for Y!");
+            return new Float2(X, Y);
         }
 
 
