@@ -5,6 +5,7 @@ using PiwotOBS.PMath;
 using PiwotOBS.Structure;
 using System.Data.SqlTypes;
 using System.Diagnostics;
+using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Threading;
 using System.Threading.Tasks;
@@ -61,6 +62,7 @@ Thread.Sleep(3000);
 var scene = (Scene)Scene.Load("SAFARI.json");
 var jumpscare = scene.FindItem("Foxyer_0706_bez_ta.png");
 var XD_FACE = scene.FindItem("XD_FACE_AVATAR");
+var hand = scene.FindItem("[DRINK] BEER_HAND");
 Animator animator = new Animator();
 VoiceMeter voiceMeter = new VoiceMeter(volumeRecordLength: 4);
 voiceMeter.Start();
@@ -69,6 +71,17 @@ float maxRotation = 60f;
 float rotationSetCut = 0.7f;
 float rotationResetCut = 0.4f;
 float curDirection = 0;
+
+FrameAnimation animation = new FrameAnimation(hand);
+using StreamReader sr = new("anim_1.json", System.Text.Encoding.UTF8);
+var node = JsonNode.Parse(sr.ReadToEnd());
+sr.Close();
+sr.Dispose();
+FrameAnimation animation2 = FrameAnimation.FromJson(node.AsObject(), scene);
+JsonSerializerOptions jsonWriterOptions = new JsonSerializerOptions()
+{
+    WriteIndented = true
+};
 Thread thread = new Thread(() =>
 {
     while (true) 
@@ -77,6 +90,13 @@ Thread thread = new Thread(() =>
 
         switch (c)
         {
+            case ConsoleKey.Enter:
+                animation.AddKeyFrameFromOBS();
+                break;
+            case ConsoleKey.S:
+                using(StreamWriter sw = new StreamWriter("anim_1.json"))
+                    sw.Write(animation.ToJson().ToJsonString(jsonWriterOptions));
+                break;
             default:
                 break;
         }
@@ -119,7 +139,9 @@ ProceduralAnimation proceduralAnimation = new ProceduralAnimation(XD_FACE, (floa
         scale: Float2.Larp(XD_FACE.CurScale, scale, 0.5f),
         rotation: Arit.Larp(XD_FACE.CurRotation, rotation, 0.5f));
 });
-animator.RegisterAnimation(proceduralAnimation);
+//animator.RegisterAnimation(proceduralAnimation);
+animation2.Loop = true;
+animator.RegisterAnimation(animation2);
 animator.Run();
 //var x = obs.GetSceneItemList("SAFARI");
 //SceneItem si = SceneItem.FromJson(x[0]);
