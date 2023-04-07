@@ -97,6 +97,13 @@ namespace PiwotOBS.Structure
             return transform;
         }
 
+        public SceneItemTransform GetCurrentOBSTransform()
+        {
+            var objectJson = GetCurrentOBSJson()?.AsObject()??throw new Exception($"No transform information for \"{Name}\"");
+
+            return SceneItemTransform.FromJson(objectJson)??throw new Exception($"Could not deserialize transform for \"{Name}\"");
+        }
+
         protected string GetSceneName()
         {
             if (Parent == null)

@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace PiwotOBS.Structure
 {
-    internal class Sceneitemtransform
+    public class SceneItemTransform
     {
         public int alignment { get; set; }
         public int boundsAlignment { get; set; }
@@ -35,10 +35,10 @@ namespace PiwotOBS.Structure
         public Float2 Size { get => new Float2(width, height); }
         public Float2 Scale { get => new Float2(scaleX, scaleY); }
 
-        public static Sceneitemtransform? FromJson(JsonObject? jsonObject)
+        public static SceneItemTransform? FromJson(JsonObject? jsonObject)
         {
             if (jsonObject == null) return null;
-            return JsonSerializer.Deserialize<Sceneitemtransform>(jsonObject.ToJsonString());
+            return JsonSerializer.Deserialize<SceneItemTransform>(jsonObject.ToJsonString());
         }
 
         public JsonObject ToJson()

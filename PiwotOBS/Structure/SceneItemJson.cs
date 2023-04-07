@@ -27,7 +27,7 @@ namespace PiwotOBS.Structure
         [JsonPropertyName("sceneItemLocked")]
         public bool Locked { get; set; }
         [JsonPropertyName("sceneItemTransform")]
-        internal Sceneitemtransform? Transform { get; set; }
+        internal SceneItemTransform? Transform { get; set; }
         [JsonPropertyName("sourceName")]
         public string SourceName { get; set; }
         [JsonPropertyName("sourceType")]
@@ -59,7 +59,7 @@ namespace PiwotOBS.Structure
 
             var obj = JsonSerializer.Deserialize<SceneItem>(jsonObject.ToJsonString(), jsonSerializerOptions);
             obj?.Init();
-            obj.Transform = Sceneitemtransform.FromJson(jsonObject["sceneItemTransform"]?.AsObject());
+            obj.Transform = SceneItemTransform.FromJson(jsonObject["sceneItemTransform"]?.AsObject());
             return obj;
         }
 
@@ -87,7 +87,7 @@ namespace PiwotOBS.Structure
 
             var obj = JsonSerializer.Deserialize<SceneItem>(jsonObject.ToJsonString(), jsonSerializerOptions);
             obj?.Init();
-            obj.Transform = Sceneitemtransform.FromJson(jsonObject["sceneItemTransform"]?.AsObject());
+            obj.Transform = SceneItemTransform.FromJson(jsonObject["sceneItemTransform"]?.AsObject());
             return obj;
         }
 
@@ -134,6 +134,16 @@ namespace PiwotOBS.Structure
             using StreamReader sw = new(filepath, System.Text.Encoding.UTF8);
             var node = JsonNode.Parse(sw.ReadToEnd());
             return node == null ? throw new Exception("Empty load json.") : FromJson(node.AsObject());
+        }
+
+        public virtual JsonObject GetCurrentOBSJson()
+        {
+            if (Parent == null)
+            {
+                throw new InvalidOperationException($"\"GetCurrentOBSJson\" operation is not supported for root scenes: \"{Name}\"!");
+            }
+            var json = OBSDeck.OBS.GetSceneItemTransform(SceneName, SceneItemId);
+            return json;
         }
     }
 }
