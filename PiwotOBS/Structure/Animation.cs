@@ -283,8 +283,14 @@ namespace PiwotOBS.Structure
 
         protected AnimationTransform GetMidFrameTransform(float animationTime)
         {
-            int frameID = keyFrames.FindIndex((x) => x.TimePoint < animationTime);
-
+            animationTime %= Duration;
+            int frameID = 0;
+            int maxFrame = keyFrames.Count - 1;
+            while (keyFrames[frameID].TimePoint <= animationTime && frameID < maxFrame)
+            {
+                frameID++;
+            }
+            frameID--;
             return AnimationKeyFrame.GetMidFrameTansform(
                 keyFrames[frameID], 
                 keyFrames[(frameID + 1) % keyFrames.Count], 
