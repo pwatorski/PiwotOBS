@@ -3,6 +3,7 @@
 using PiwotOBS;
 using PiwotOBS.PMath;
 using PiwotOBS.Structure;
+using PiwotOBS.Structure.Animations;
 using System.Data.SqlTypes;
 using System.Diagnostics;
 using System.Text.Json;
