@@ -58,28 +58,38 @@ namespace PiwotOBS.Structure.Animations
                 );
         }
 
-        public void AddKeyFrame(AnimationTransform transform, float timePoint)
+        public void AddKeyFrame(AnimationTransform? transform=null, float? timePoint=null, bool enable=false, bool disable=false)
         {
-            if (transform.Scale == null)
+            if (transform != null)
             {
-                throw new Exception(nameof(transform.Scale));
+                if (transform.Scale == null)
+                {
+                    throw new Exception(nameof(transform.Scale));
+                }
+                if (transform.Rotation == null)
+                {
+                    throw new Exception(nameof(transform.Rotation));
+                }
+                if (transform.Position == null)
+                {
+                    throw new Exception(nameof(transform.Position));
+                }
+                if (transform.Size == null)
+                {
+                    throw new Exception(nameof(transform.Size));
+                }
             }
-            if (transform.Rotation == null)
-            {
-                throw new Exception(nameof(transform.Rotation));
-            }
-            if (transform.Position == null)
-            {
-                throw new Exception(nameof(transform.Position));
-            }
-            if (transform.Size == null)
-            {
-                throw new Exception(nameof(transform.Size));
-            }
-            AddKeyFrame(new AnimationKeyFrame(transform, timePoint));
+            
+            timePoint ??= keyFrames.Count > 0 ? keyFrames.Last().TimePoint + 1 : 0;
+
+
+
+            AddKeyFrame(new AnimationKeyFrame(transform, (float)timePoint, new AnimatioItemEnableAction(enable, disable)));
         }
         public void AddKeyFrame(AnimationKeyFrame keyFrame)
         {
+
+            //TODO Make generated frames for those without transform - case when switching enabled status!
             keyFrames.Add(keyFrame);
             keyFrames.Sort((x, y) => x.TimePoint.CompareTo(y.TimePoint));
             Duration = CalculateDuration();

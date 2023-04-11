@@ -7,12 +7,19 @@ namespace PiwotOBS.Structure.Animations
     {
         public float TimePoint { get; protected set; }
         public AnimatioItemEnableAction EnableAction { get; protected set; }
-        public AnimationTransform Transform { get; protected set; }
-        public AnimationKeyFrame(AnimationTransform transform, float timePoint, AnimatioItemEnableAction? enableAction = null)
+        public AnimationTransform? Transform { get; protected set; }
+        public bool GeneratedTransform { get; protected set; } = false;
+        public AnimationKeyFrame(AnimationTransform? transform, float timePoint, AnimatioItemEnableAction? enableAction = null)
         {
             Transform = transform;
             EnableAction = enableAction ?? new AnimatioItemEnableAction(false, false);
             TimePoint = timePoint;
+        }
+        
+        public void GenerateTransform(AnimationKeyFrame previousFrame, AnimationKeyFrame nextFrame)
+        {
+            Transform = GetMidFrameTansform(previousFrame, nextFrame, TimePoint);
+            GeneratedTransform = true;
         }
 
         protected static Float2? GetMidValue(Float2? a, Float2? b, float ratio, Float2 defaultA)
@@ -53,7 +60,7 @@ namespace PiwotOBS.Structure.Animations
             float transitionDuration = b.TimePoint - a.TimePoint;
             float transitionTimePoint = time - a.TimePoint;
             float transitionRatio = transitionTimePoint / transitionDuration;
-
+            if (a.Transform == null || b.Transform == null) throw new Exception("Cannot create mid frame transform!");
             Float2? newPosition = GetMidValue(a.Transform.Position, b.Transform.Position, transitionRatio, a.Transform.TargetItem.CurPosition);
             Float2? newSize = GetMidValue(a.Transform.Size, b.Transform.Size, transitionRatio, a.Transform.TargetItem.CurSize);
             Float2? newScale = GetMidValue(a.Transform.Scale, b.Transform.Scale, transitionRatio, a.Transform.TargetItem.CurScale);
@@ -73,8 +80,9 @@ namespace PiwotOBS.Structure.Animations
             return new JsonObject()
             {
                 {nameof(TimePoint), TimePoint },
-                {nameof(Transform), Transform.ToJson() },
-                {nameof(EnableAction), EnableAction.ToJson() }
+                {nameof(Transform), Transform?.ToJson() },
+                {nameof(EnableAction), EnableAction.ToJson() },
+                {nameof(GeneratedTransform), GeneratedTransform }
             };
         }
 
@@ -83,8 +91,9 @@ namespace PiwotOBS.Structure.Animations
             var timePoint = (float?)source["TimePoint"] ?? throw new Exception("No timepoint!");
             var transformJson = source["Transform"]?.AsObject() ?? throw new Exception("No transform!");
             var enableAction = source["EnableAction"]?.AsObject() ?? throw new Exception("No enable action!");
-
-            return new AnimationKeyFrame(AnimationTransform.FromJson(transformJson, rootScene), timePoint, AnimatioItemEnableAction.FromJson(enableAction));
+            var generatedTransform = (bool) (source["GeneratedTransform"] ?? throw new Exception("No generatedTransform!"));
+            AnimationTransform? animationTransform = generatedTransform ? null : AnimationTransform.FromJson(transformJson, rootScene);
+            return new AnimationKeyFrame(animationTransform, timePoint, AnimatioItemEnableAction.FromJson(enableAction));
         }
     }
 }
