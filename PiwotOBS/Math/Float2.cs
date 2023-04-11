@@ -117,10 +117,11 @@ namespace PiwotOBS.PMath
         /// 
         /// </summary>
         /// <param name="i2"></param>
-        public Float2(Float2 i2)
+        public Float2(Float2? i2)
         {
-            x = i2.x;
-            y = i2.y;
+
+            x = i2?.x??0;
+            y = i2?.y??0;
         }
         #endregion
 
