@@ -43,7 +43,29 @@ namespace PiwotOBS.Structure
 
         public JsonObject ToJson()
         {
-            return JsonSerializer.SerializeToNode(this).AsObject();
+            return JsonSerializer.SerializeToNode(this)?.AsObject() ?? new JsonObject();
+        }
+
+        public void UpdateFrom(SceneItemTransform transform)
+        {
+            alignment = transform.alignment;
+            boundsAlignment = transform.boundsAlignment;
+            boundsHeight = transform.boundsHeight;
+            boundsType = transform.boundsType;
+            boundsWidth = transform.boundsWidth;
+            cropBottom = transform.cropBottom;
+            cropLeft = transform.cropLeft;
+            cropRight = transform.cropRight;
+            cropTop = transform.cropTop;
+            height = transform.height;
+            positionX = transform.positionX;
+            positionY = transform.positionY;
+            rotation = transform.rotation;
+            scaleX = transform.scaleX;
+            scaleY = transform.scaleY;
+            sourceHeight = transform.sourceHeight;
+            sourceWidth = transform.sourceWidth;
+            width = transform.width;
         }
     }
 }

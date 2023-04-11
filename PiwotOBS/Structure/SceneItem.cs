@@ -16,7 +16,7 @@ namespace PiwotOBS.Structure
     {
         public Float2 OBSPosition
         {
-            get => Transform?.Position ?? Float2.Zero;
+            get => new Float2(Transform?.Position);
             protected set
             {
                 if (Transform != null)
@@ -31,7 +31,7 @@ namespace PiwotOBS.Structure
 
         public Float2 OBSScale
         {
-            get => Transform?.Scale ?? Float2.Zero;
+            get => new Float2(Transform?.Scale);
             protected set
             {
                 if (Transform != null)
@@ -45,7 +45,7 @@ namespace PiwotOBS.Structure
         protected Float2? curScale = null;
         public Float2 OBSSize
         {
-            get => Transform?.Size ?? Float2.Zero;
+            get => new Float2(Transform?.Size);
             protected set
             {
                 if (Transform != null)
@@ -59,6 +59,9 @@ namespace PiwotOBS.Structure
         protected Float2? curSize = null;
         public float OBSRotation { get => Transform?.rotation ?? 0; protected set { if (Transform != null) Transform.rotation = value; } }
         public float CurRotation { get; protected set; }
+
+        public bool CurEnabled { get; protected set; }
+
         public SceneItem? Parent { get; protected set; }
 
         public string SceneName { get; protected set; } = String.Empty;
@@ -99,9 +102,26 @@ namespace PiwotOBS.Structure
 
         public SceneItemTransform GetCurrentOBSTransform()
         {
-            var objectJson = GetCurrentOBSJson()?.AsObject()??throw new Exception($"No transform information for \"{Name}\"");
+            var objectJson = GetCurrentOBSJson()?.AsObject() ?? throw new Exception($"No transform information for \"{Name}\"");
 
-            return SceneItemTransform.FromJson(objectJson)??throw new Exception($"Could not deserialize transform for \"{Name}\"");
+            return SceneItemTransform.FromJson(objectJson) ?? throw new Exception($"Could not deserialize transform for \"{Name}\"");
+        }
+        public void UpdateFromOBS()
+        {
+            OBSEnabled = CurEnabled = GetCurrentOBSEnabled();
+            var OBSTransform = GetCurrentOBSTransform() ?? throw new Exception($"Could not prepare item \"{Name}\" transform!");
+            if (Transform == null) throw new Exception($"Item \"{Name}\" has no transform!");
+            Transform.UpdateFrom(OBSTransform);
+            ResetCurToOBS();
+        }
+
+        public void ResetCurToOBS()
+        {
+            curScale = OBSScale;
+            curPosition = OBSPosition;
+            curSize = OBSSize;
+            CurRotation = OBSRotation;
+
         }
 
         protected string GetSceneName()
@@ -186,6 +206,18 @@ namespace PiwotOBS.Structure
         public void SetRelativePosition(Float2 delta)
         {
             TransformObject(newPos: OBSPosition + delta);
+        }
+
+        public void Enable()
+        {
+            CurEnabled = true;
+            OBSDeck.OBS.SetSceneItemEnabled(SceneName, SceneItemId, true);
+        }
+
+        public void Disable()
+        {
+            CurEnabled = false;
+            OBSDeck.OBS.SetSceneItemEnabled(SceneName, SceneItemId, false);
         }
 
     }

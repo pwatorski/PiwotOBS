@@ -19,7 +19,7 @@ namespace PiwotOBS.Structure
         [JsonPropertyName("sceneItemBlendMode")]
         public string SceneItemBlendMode { get; set; }
         [JsonPropertyName("sceneItemEnabled")]
-        public bool Enabled { get; set; }
+        public bool OBSEnabled { get; set; }
         [JsonPropertyName("sceneItemId")]
         public int SceneItemId { get; set; }
         [JsonPropertyName("sceneItemIndex")]
@@ -99,7 +99,7 @@ namespace PiwotOBS.Structure
                 { "inputKind", InputKind },
                 { "isGroup", IsGroup },
                 { "sceneItemBlendMode", SceneItemBlendMode },
-                { "sceneItemEnabled", Enabled },
+                { "sceneItemEnabled", OBSEnabled },
                 { "sceneItemId", SceneItemId },
                 { "sceneItemIndex", SceneItemIndex },
                 { "sceneItemLocked", Locked },
@@ -144,6 +144,12 @@ namespace PiwotOBS.Structure
             }
             var json = OBSDeck.OBS.GetSceneItemTransform(SceneName, SceneItemId);
             return json;
+        }
+
+        public virtual bool GetCurrentOBSEnabled()
+        {
+            bool enabled = OBSDeck.OBS.GetSceneItemEnabled(SceneName, SceneItemId);
+            return enabled;
         }
     }
 }
