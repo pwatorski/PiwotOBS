@@ -9,6 +9,7 @@ namespace PiwotOBS.Structure.Animations
     {
         public SceneItem TargetItem;
         public float LastStepTime { get; protected set; }
+        public Animator? Animator { get; protected set; }
         public Animation(SceneItem target)
         {
             TargetItem = target;
@@ -22,6 +23,16 @@ namespace PiwotOBS.Structure.Animations
         protected void ApplyStep(AnimationTransform transform)
         {
             TargetItem.TransformObject(newPos: transform.Position, newScale: transform.Scale, newRotation: transform.Rotation);
+        }
+
+        internal void AddAnimator(Animator animator)
+        {
+            Animator = animator;
+        }
+
+        internal void RemoveAnimator()
+        {
+            Animator = null;
         }
     }
 }

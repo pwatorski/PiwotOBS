@@ -91,9 +91,7 @@ namespace PiwotOBS.Structure.Animations
             var timePoint = (float?)source["TimePoint"] ?? throw new Exception("No timepoint!");
             var transformJson = source["Transform"]?.AsObject() ?? throw new Exception("No transform!");
             var enableAction = source["EnableAction"]?.AsObject() ?? throw new Exception("No enable action!");
-            var generatedTransform = (bool) (source["GeneratedTransform"] ?? throw new Exception("No generatedTransform!"));
-            AnimationTransform? animationTransform = generatedTransform ? null : AnimationTransform.FromJson(transformJson, rootScene);
-            return new AnimationKeyFrame(animationTransform, timePoint, AnimatioItemEnableAction.FromJson(enableAction));
+            return new AnimationKeyFrame(AnimationTransform.FromJson(transformJson, rootScene), timePoint, AnimatioItemEnableAction.FromJson(enableAction));
         }
     }
 }

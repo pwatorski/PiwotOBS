@@ -9,6 +9,7 @@ namespace PiwotOBS.Structure.Animations
         public float StartTime { get; protected set; } = 0;
         public float Duration { get; protected set; } = 0;
         public bool Loop { get; set; } = false;
+        public bool Pause { get; set; } = false;
         protected bool oneOffFinished = false;
         public FrameAnimation(SceneItem target) : base(target)
         {
@@ -51,6 +52,8 @@ namespace PiwotOBS.Structure.Animations
                 frameID++;
             }
             frameID--;
+            if (frameID < 0)
+                frameID = 0;
             return AnimationKeyFrame.GetMidFrameTansform(
                 keyFrames[frameID],
                 keyFrames[(frameID + 1) % keyFrames.Count],

@@ -12,9 +12,14 @@ namespace PiwotOBS
         static readonly float maxVolume = 32767;
         public float CurVolume { get; protected set; } = 0;
         public float[] VolumeRecord;
+        public List<float> VolumeHistory;
+        public List<float> AvgVolumeHistory;
         public float VolumeRecordAvg { get; protected set; } = 0;
         int volumeRecordPoint = 0;
-        public VoiceMeter(int deviceNumber=0, int bufferMilliseconds=50, int volumeRecordLength = 10)
+        int volumeHistoryLenght;
+        public bool Enabled { get; protected set; } = false;
+        public event EventHandler<Tuple<float, float>> VolumeUpdate;
+        public VoiceMeter(int deviceNumber=0, int bufferMilliseconds=50, int volumeRecordLength = 10, int volumeHistoryLenght = 100)
         {
             waveIn = new NAudio.Wave.WaveInEvent
             {
@@ -24,15 +29,20 @@ namespace PiwotOBS
             };
             waveIn.DataAvailable += LogSound;
             VolumeRecord = new float[volumeRecordLength];
+            VolumeHistory = new List<float>() { 0 };
+            AvgVolumeHistory = new List<float>() { 0 };
+            this.volumeHistoryLenght = volumeHistoryLenght;
         }
 
         public void Start()
         {
             waveIn.StartRecording();
+            Enabled = true;
         }
         public void Stop()
         {
             waveIn.StopRecording();
+            Enabled = false;
         }
 
         static string GetBars(double fraction, int barCount = 35)
@@ -54,6 +64,14 @@ namespace PiwotOBS
             VolumeRecord[volumeRecordPoint] = CurVolume;
             volumeRecordPoint = (volumeRecordPoint + 1) % VolumeRecord.Length;
             VolumeRecordAvg = VolumeRecord.Sum() / VolumeRecord.Length;
+            VolumeHistory.Add(CurVolume);
+            AvgVolumeHistory.Add(VolumeRecordAvg);
+            if (VolumeHistory.Count > volumeHistoryLenght)
+            {
+                AvgVolumeHistory.RemoveAt(0);
+                VolumeHistory.RemoveAt(0);
+            }
+            VolumeUpdate.Invoke(this, new Tuple<float, float>(CurVolume, VolumeRecordAvg));
         }
     }
 }

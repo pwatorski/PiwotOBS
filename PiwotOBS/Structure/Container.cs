@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.Json.Nodes;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace PiwotOBS.Structure
@@ -75,6 +76,35 @@ namespace PiwotOBS.Structure
             {
                 AddItem(SceneItem.FromOBSJson(item));
             }
+        }
+
+        public SceneItem? GetChild(string name)
+        {
+            foreach (var item in Items)
+            {
+                if (item.Name == name)
+                {
+                    return item;
+                }
+            }
+            return null;
+        }
+
+        public List<T> GetChildrenOfType<T>(bool recursive=false) where T : SceneItem
+        {
+            List<T> children = new List<T>();
+            foreach (var item in Items)
+            {
+                if (item is T)
+                {
+                    children.Add((T)item);
+                }
+                if(recursive && item is Container)
+                {
+                    children.AddRange(((Container)item).GetChildrenOfType<T>(recursive));
+                }
+            }
+            return children;
         }
 
         public string GetTreeString()

@@ -37,6 +37,16 @@ namespace PiwotOBS.Structure
 
         public string Name { get => SourceName; }
 
+        [JsonConstructor]
+        public SceneItem(string sourceName)
+        {
+            SourceName = sourceName;
+        }
+
+        public SceneItem()
+        {
+        }
+
         public static SceneItem? FromOBSJson(JsonObject jsonObject)
         {
             JsonSerializerOptions jsonSerializerOptions = new JsonSerializerOptions()
@@ -56,11 +66,27 @@ namespace PiwotOBS.Structure
                 scene.BuildOBSChildren();
                 return scene;
             }
+            string inputKind = jsonObject["inputKind"].GetValue<string>();
+            SceneItem sceneItem;
+            switch (inputKind)
+            {
+                case "text_gdiplus_v2":
+                    sceneItem = JsonSerializer.Deserialize<ItemText>(jsonObject.ToJsonString(), jsonSerializerOptions);
+                    break;
+                default:
+                    sceneItem = JsonSerializer.Deserialize<SceneItem>(jsonObject.ToJsonString(), jsonSerializerOptions);
+                    break;
+            }
+            sceneItem?.Init();
+            if(sceneItem != null)
+                sceneItem.Transform = SceneItemTransform.FromJson(jsonObject["sceneItemTransform"]?.AsObject());
+            return sceneItem;
+        }
 
-            var obj = JsonSerializer.Deserialize<SceneItem>(jsonObject.ToJsonString(), jsonSerializerOptions);
-            obj?.Init();
-            obj.Transform = SceneItemTransform.FromJson(jsonObject["sceneItemTransform"]?.AsObject());
-            return obj;
+        public static SceneItem? FromJson(string jsonString)
+        {
+            var obj = JsonObject.Parse(jsonString);
+            return obj == null ? throw new Exception("Could not parse transform.") : FromJson(obj.AsObject());
         }
 
         public static SceneItem? FromJson(JsonObject jsonObject)
@@ -85,10 +111,21 @@ namespace PiwotOBS.Structure
                 return scene;
             }
 
-            var obj = JsonSerializer.Deserialize<SceneItem>(jsonObject.ToJsonString(), jsonSerializerOptions);
-            obj?.Init();
-            obj.Transform = SceneItemTransform.FromJson(jsonObject["sceneItemTransform"]?.AsObject());
-            return obj;
+            string inputKind = jsonObject["inputKind"].GetValue<string>();
+            SceneItem sceneItem;
+            switch (inputKind)
+            {
+                case "text_gdiplus_v2":
+                    sceneItem = JsonSerializer.Deserialize<ItemText>(jsonObject.ToJsonString(), jsonSerializerOptions);
+                    break;
+                default:
+                    sceneItem = JsonSerializer.Deserialize<SceneItem>(jsonObject.ToJsonString(), jsonSerializerOptions);
+                    break;
+            }
+            sceneItem?.Init();
+            if (sceneItem != null)
+                sceneItem.Transform = SceneItemTransform.FromJson(jsonObject["sceneItemTransform"]?.AsObject());
+            return sceneItem;
         }
 
 
@@ -105,7 +142,7 @@ namespace PiwotOBS.Structure
                 { "sceneItemLocked", Locked },
                 { "sceneItemTransform", Transform?.ToJson() },
                 { "sourceName", SourceName },
-                { "sourceType", SourceType }
+                { "sourceType", SourceType },
             };
             return json;
         }
@@ -145,6 +182,8 @@ namespace PiwotOBS.Structure
             var json = OBSDeck.OBS.GetSceneItemTransform(SceneName, SceneItemId);
             return json;
         }
+
+
 
         public virtual bool GetCurrentOBSEnabled()
         {

@@ -1,9 +1,11 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.NetworkInformation;
 using System.Text.Json;
 using System.Text.Json.Nodes;
+using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace PiwotOBS
 {
@@ -652,6 +654,44 @@ namespace PiwotOBS
             };
 
             SendRequest(nameof(SetSceneName), request);
+        }
+
+        /// <summary>
+        /// Apply settings to a source filter
+        /// </summary>
+        /// <param name="sourceName">Source with filter</param>
+        /// <param name="filterName">Filter name</param>
+        /// <param name="filterSettings">JObject with filter settings</param>
+        /// <param name="overlay">Apply over existing settings?</param>
+        public void SetSourceFilterSettings(string sourceName, string filterName, JsonObject filterSettings, bool overlay = false)
+        {
+            var request = new JsonObject
+            {
+                { nameof(sourceName), sourceName },
+                { nameof(filterName), filterName },
+                { nameof(filterSettings), filterSettings },
+                { nameof(overlay), overlay }
+            };
+
+            SendRequest(nameof(SetSourceFilterSettings), request);
+        }
+
+
+        /// <summary>
+        /// Return a list of settings for a specific filter
+        /// </summary>
+        /// <param name="sourceName">Source name</param>
+        /// <param name="filterName">Filter name</param>
+        public JsonObject GetSourceFilter(string sourceName, string filterName)
+        {
+            var request = new JsonObject
+            {
+                { nameof(sourceName), sourceName },
+                { nameof(filterName), filterName }
+            };
+
+            JsonObject response = SendRequest(nameof(GetSourceFilter), request);
+            return response["filterSettings"].AsObject();
         }
     }
 }

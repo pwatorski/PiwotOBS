@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Text.Json.Serialization;
@@ -121,7 +122,20 @@ namespace PiwotOBS.Structure
             curPosition = OBSPosition;
             curSize = OBSSize;
             CurRotation = OBSRotation;
+        }
 
+        public void ResetOBSToCur()
+        {
+            TransformObject(newPos:CurPosition, newScale:CurScale, newRotation:CurRotation);
+        }
+
+        public void OverrideFromSave(string savePath)
+        {
+            using StreamReader sr = new StreamReader(savePath, encoding:Encoding.UTF8);
+            var loadedObject = FromJson(sr.ReadToEnd());
+
+            if (loadedObject != null && loadedObject.Transform != null)
+                Transform?.UpdateFrom(loadedObject.Transform);
         }
 
         protected string GetSceneName()
@@ -138,6 +152,7 @@ namespace PiwotOBS.Structure
 
             return Parent?.GetSceneName() ?? string.Empty;
         }
+
 
         public void TransformObject(
             Float2? newPos = null,
@@ -218,6 +233,16 @@ namespace PiwotOBS.Structure
         {
             CurEnabled = false;
             OBSDeck.OBS.SetSceneItemEnabled(SceneName, SceneItemId, false);
+        }
+
+        public void MoveToBottom()
+        {
+            OBSDeck.OBS.SetSceneItemIndex(SceneName, SceneItemId, 0);
+        }
+        public void MoveToTop()
+        {
+            int topPos = ((Container?)Parent)?.Items.Count - 1 ?? 0;
+            OBSDeck.OBS.SetSceneItemIndex(SceneName, SceneItemId, topPos);
         }
 
     }

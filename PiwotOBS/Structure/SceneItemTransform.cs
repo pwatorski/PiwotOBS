@@ -6,6 +6,7 @@ using System.Security.Principal;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace PiwotOBS.Structure
@@ -31,14 +32,24 @@ namespace PiwotOBS.Structure
         public float sourceWidth { get; set; }
         public float width { get; set; }
 
+        [JsonIgnore]
         public Float2 Position { get => new Float2(positionX, positionY); }
+        [JsonIgnore]
         public Float2 Size { get => new Float2(width, height); }
+        [JsonIgnore]
         public Float2 Scale { get => new Float2(scaleX, scaleY); }
 
         public static SceneItemTransform? FromJson(JsonObject? jsonObject)
         {
             if (jsonObject == null) return null;
             return JsonSerializer.Deserialize<SceneItemTransform>(jsonObject.ToJsonString());
+        }
+
+        public static SceneItemTransform? FromJson(string jsonString)
+        {
+            SceneItemTransform sit = JsonSerializer.Deserialize<SceneItemTransform>(jsonString);
+            Console.WriteLine(sit);
+            return sit;
         }
 
         public JsonObject ToJson()
@@ -66,6 +77,11 @@ namespace PiwotOBS.Structure
             sourceHeight = transform.sourceHeight;
             sourceWidth = transform.sourceWidth;
             width = transform.width;
+        }
+
+        public override string ToString()
+        {
+            return ToJson().ToString();
         }
     }
 }
