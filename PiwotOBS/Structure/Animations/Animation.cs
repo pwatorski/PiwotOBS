@@ -34,5 +34,10 @@ namespace PiwotOBS.Structure.Animations
         {
             Animator = null;
         }
+
+        public virtual void ReplaceTarget(SceneItem target)
+        {
+            TargetItem = target;
+        }
     }
 }

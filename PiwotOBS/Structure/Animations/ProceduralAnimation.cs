@@ -16,5 +16,11 @@
             ApplyStep(transform);
             base.Step(time);
         }
+
+        override public void ReplaceTarget(SceneItem target)
+        {
+            base.ReplaceTarget(target);
+            baseTransform = new AnimationTransform(target);
+        }
     }
 }

@@ -1,9 +1,9 @@
 from gtts import gTTS
 import sys
 
-def tts(text:str, save_path:str):
+def tts(text:str, save_path:str, lang:str="pl"):
     try:
-        audio = gTTS(text=text, lang="pl", slow=False)
+        audio = gTTS(text=text, lang=lang, slow=False)
         
         audio.save(save_path)
     except Exception as ex:
@@ -12,9 +12,9 @@ def tts(text:str, save_path:str):
 
 
 if __name__ == '__main__':
-    tts(sys.argv[1], sys.argv[2])
+    tts(sys.argv[1], sys.argv[2], sys.argv[3])
 
-
+     
 
 
 

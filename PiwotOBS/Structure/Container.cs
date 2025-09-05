@@ -90,7 +90,7 @@ namespace PiwotOBS.Structure
             return null;
         }
 
-        public List<T> GetChildrenOfType<T>(bool recursive=false) where T : SceneItem
+        public List<T> GetChildrenOfType<T>(bool recursive = false) where T : SceneItem
         {
             List<T> children = new List<T>();
             foreach (var item in Items)
@@ -99,9 +99,24 @@ namespace PiwotOBS.Structure
                 {
                     children.Add((T)item);
                 }
-                if(recursive && item is Container)
+                if (recursive && item is Container)
                 {
                     children.AddRange(((Container)item).GetChildrenOfType<T>(recursive));
+                }
+            }
+            return children;
+        }
+
+        public List<SceneItem> GetChildren(bool recursive = false)
+        {
+            List<SceneItem> children = new List<SceneItem>();
+            foreach (var item in Items)
+            {
+                children.Add(item);
+                
+                if (recursive && item is Container)
+                {
+                    children.AddRange(((Container)item).GetChildren(recursive));
                 }
             }
             return children;

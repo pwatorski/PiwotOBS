@@ -73,6 +73,9 @@ namespace PiwotOBS.Structure
                 case "text_gdiplus_v2":
                     sceneItem = JsonSerializer.Deserialize<ItemText>(jsonObject.ToJsonString(), jsonSerializerOptions);
                     break;
+                case "image_source":
+                    sceneItem = JsonSerializer.Deserialize<ItemImage>(jsonObject.ToJsonString(), jsonSerializerOptions);
+                    break;
                 default:
                     sceneItem = JsonSerializer.Deserialize<SceneItem>(jsonObject.ToJsonString(), jsonSerializerOptions);
                     break;
@@ -117,6 +120,9 @@ namespace PiwotOBS.Structure
             {
                 case "text_gdiplus_v2":
                     sceneItem = JsonSerializer.Deserialize<ItemText>(jsonObject.ToJsonString(), jsonSerializerOptions);
+                    break;
+                case "image_source":
+                    sceneItem = JsonSerializer.Deserialize<ItemImage>(jsonObject.ToJsonString(), jsonSerializerOptions);
                     break;
                 default:
                     sceneItem = JsonSerializer.Deserialize<SceneItem>(jsonObject.ToJsonString(), jsonSerializerOptions);

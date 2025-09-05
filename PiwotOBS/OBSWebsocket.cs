@@ -259,7 +259,7 @@ namespace PiwotOBS
                 // Message id already exists, retry with a new one.
             } while (true && false);
             // Send the message 
-            client.Send(message.ToJsonString());
+            client.SendInstant(message.ToJsonString()).Wait();
             if (!waitForReply)
             {
                 return null;
