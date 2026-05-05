@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.Json.Nodes;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace PiwotOBS.PMath
@@ -13,10 +14,14 @@ namespace PiwotOBS.PMath
         /// <summary>
         /// The x value;
         /// </summary>
+        /// 
+        [JsonPropertyName("x")]
         protected float x;
         /// <summary>
         /// The y value;
         /// </summary>
+        /// 
+        [JsonPropertyName("y")]
         protected float y;
 
         /// <summary>
@@ -108,6 +113,8 @@ namespace PiwotOBS.PMath
         /// </summary>
         /// <param name="x"></param>
         /// <param name="y"></param>
+        /// 
+        [JsonConstructor]
         public Float2(float x, float y)
         {
             this.x = x;
@@ -571,5 +578,10 @@ namespace PiwotOBS.PMath
 
 
         #endregion
+
+        #region Json
+
+        #endregion
+
     }
 }

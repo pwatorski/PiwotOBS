@@ -256,7 +256,7 @@ namespace PiwotOBS
                 {
                     break;
                 }
-                // Message id already exists, retry with a new one.
+                // Message id already exists, retry with a  new one.
             } while (true && false);
             // Send the message 
             client.SendInstant(message.ToJsonString()).Wait();
