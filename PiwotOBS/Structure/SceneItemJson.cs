@@ -76,6 +76,12 @@ namespace PiwotOBS.Structure
                 case "image_source":
                     sceneItem = JsonSerializer.Deserialize<ItemImage>(jsonObject.ToJsonString(), jsonSerializerOptions);
                     break;
+                case "ffmpeg_source":
+                    sceneItem = JsonSerializer.Deserialize<ItemFfmpeg>(jsonObject.ToJsonString(), jsonSerializerOptions);
+                    break;
+                case "monitor_capture":
+                    sceneItem = JsonSerializer.Deserialize<ItemCaptureMonitor>(jsonObject.ToJsonString(), jsonSerializerOptions);
+                    break;
                 default:
                     sceneItem = JsonSerializer.Deserialize<SceneItem>(jsonObject.ToJsonString(), jsonSerializerOptions);
                     break;
