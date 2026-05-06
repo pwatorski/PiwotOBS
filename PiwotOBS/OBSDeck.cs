@@ -35,8 +35,8 @@ namespace PiwotOBS
             {
                 try
                 {
-                    OBS.ConnectAsync("ws://127.0.0.1:4455", "zaq1235pli");
-                    //OBS.ConnectAsync($"ws://{ip}:{port}", password);
+                    //OBS.ConnectAsync("ws://127.0.0.1:4455", "zaq1235pli");
+                    OBS.ConnectAsync($"ws://{ip}:{port}", password);
                 }
                 catch (Exception ex)
                 {
